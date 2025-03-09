@@ -138,7 +138,7 @@ def register_callbacks(app):
 
         # Bar Chart for Top Performers
         district_grouped_bar_chart = px.bar(
-            lead_counts, x="Lead Stage", y="Lead Count", color="Lead | Permanent District",
+            lead_counts, x="Lead | Permanent District", y="Lead Count", color="Lead Stage",
             title="Lead Stage Distribution per District",
             barmode='group', template="plotly_dark"
         )
@@ -146,10 +146,10 @@ def register_callbacks(app):
         
         # Generate Report Layout
         report_layout = html.Div([
-            # dcc.Graph(figure=district_grouped_bar_chart),
+            dcc.Graph(figure=district_grouped_bar_chart),
             dcc.Graph(figure=district_sunburst_chart),
             dcc.Graph(figure=district_treemap_chart),    
-            #dcc.Graph(figure=district_stacked_bar_chart),
+            dcc.Graph(figure=district_stacked_bar_chart),
             dcc.Graph(figure=district_heatmap)
             ])
         return report_layout

@@ -149,7 +149,7 @@ def register_callbacks(app):
             # dcc.Graph(figure=district_grouped_bar_chart),
             dcc.Graph(figure=district_sunburst_chart),
             dcc.Graph(figure=district_treemap_chart),    
-            dcc.Graph(figure=district_stacked_bar_chart),
+            #dcc.Graph(figure=district_stacked_bar_chart),
             dcc.Graph(figure=district_heatmap)
             ])
         return report_layout

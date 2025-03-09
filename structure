@@ -1,0 +1,19 @@
+/dash_app/
+│-- app.py                # Main Dash app entry point
+│-- requirements.txt       # Dependencies (Dash, Pandas, Plotly, etc.)
+│-- assets/               # CSS, images, and custom styling
+│-- data/                 # Uploaded datasets (stored temporarily)
+│-- pages/                # Contains all report pages
+│   │-- home.py           # Homepage with upload functionality
+│   │-- caller_reports.py # Visualizations related to callers
+│   │-- group_reports.py  # Visualizations related to groups
+│   │-- district_reports.py # Visualizations related to districts
+│   │-- source_reports.py # Visualizations related to lead sources
+│   │-- course_reports.py # Visualizations related to courses
+│-- components/           # Reusable UI components (Sidebar, Upload section)
+│   │-- navbar.py         # Sidebar navigation
+│   │-- upload.py         # File upload component
+│-- utils/                # Helper functions for data processing
+│   │-- data_processing.py # Functions for cleaning and analyzing the uploaded dataset
+│   │-- plotting.py       # Functions for creating visualizations
+│-- config.py             # App configurations (file paths, settings)

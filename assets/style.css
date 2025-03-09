@@ -1,0 +1,94 @@
+/* Add padding and margin for spacing */
+.mt-4 {
+    margin-top: 20px;
+}
+.mb-3{
+    color:#1e3c72;
+}
+.mt-3{
+    color:#1e3c72;
+}
+.note{
+    color: #0f54d3;
+    font-style: italic;
+}
+
+/* Card Titles: Neon Cyan */
+.card-title {
+    font-weight: 800;
+    font-family: 'Franklin Gothic Medium';
+    color: #00eaff; /* Neon Cyan */
+}
+
+/* Fix margin-left issue */
+.cards-section {
+    margin-left: 150px;
+}
+
+/* Values with Dark Background & Neon Glow */
+.values {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #1e3c72, #2a5298); /* Dark Blue Gradient */
+    padding: 15px;
+    border-radius: 10px;
+    display: inline-block;
+    text-align: center;
+    min-width: 100px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0px 0px 10px rgba(0, 234, 255, 0.5); /* Neon Cyan Glow */
+}
+
+/* Hover Effect */
+.values:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 0px 20px rgba(0, 234, 255, 0.8); /* Stronger Neon Glow */
+}
+
+/* Summary Cards - Dark Background with Neon Borders */
+#summary-cards {
+    background: #212121; /* Dark Gray */
+    padding: 5px;
+    border-radius: 12px;
+    border: 3px solid #00eaff; /* Neon Cyan Border */
+    box-shadow: 0px 0px 15px rgba(0, 234, 255, 0.4); /* Neon Cyan Glow */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Hover effect: Elevate the box and enhance neon glow */
+#summary-cards:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 25px rgba(0, 234, 255, 0.8);
+}
+
+/* Charts Section - Vibrant Gradient for Pop */
+#charts {
+    background: linear-gradient(135deg, #ff512f, #dd2476); /* Neon Red-Pink */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 10px rgba(255, 81, 47, 0.5); /* Neon Orange Glow */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Hover effect: Scale the div slightly with stronger neon glow */
+#charts:hover {
+    transform: scale(1.03);
+    box-shadow: 0px 0px 20px rgba(255, 81, 47, 0.8);
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#summary-cards, #charts {
+    animation: fadeIn 0.8s ease-in-out;
+}

@@ -146,7 +146,7 @@ def register_callbacks(app):
         
         # Generate Report Layout
         report_layout = html.Div([
-            dcc.Graph(figure=district_grouped_bar_chart),
+            # dcc.Graph(figure=district_grouped_bar_chart),
             dcc.Graph(figure=district_sunburst_chart),
             dcc.Graph(figure=district_treemap_chart),    
             dcc.Graph(figure=district_stacked_bar_chart),

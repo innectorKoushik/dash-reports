@@ -8,18 +8,17 @@ import plotly.express as px
 # Layout
 layout = html.Div([
     dcc.Store(id='processed-data-store'), 
-    html.H2("Caller Reports", className="text-center text-white"),
-    #dcc.Store(id='processed-data-store'),  # Store processed data
+    html.H2("Caller Reports", className="text-center text-white mt-3"),
 
-    dbc.Container([
+    dbc.Container(fluid=True, children=[
         dbc.Row([
-            dbc.Col(dcc.Dropdown(id='owner-filter', options=[], multi=True, placeholder="Select Owners"), width=2),
-            dbc.Col(dcc.Dropdown(id='source-filter', options=[], multi=True, placeholder="Select Source"), width=2),
-            dbc.Col(dcc.Dropdown(id='course-filter', options=[], multi=True, placeholder="Select Course"), width=2),
-            dbc.Col(dcc.Dropdown(id='district-filter', options=[], multi=True, placeholder="Select Permanent District"), width=2),
-            dbc.Col(dcc.Dropdown(id='activity-filter', options=[], multi=True, placeholder="Select Activity Event"), width=2),
-            dbc.Col(dcc.Dropdown(id='status-filter', options=[], multi=True, placeholder="Select Status"), width=2),
-            dbc.Col(dcc.Dropdown(id='group-filter', options=[], multi=True, placeholder="Select Group"), width=2),
+            dbc.Col(dcc.Dropdown(id='owner-filter', options=[], multi=True, placeholder="Select Owners"), width=12, md=6, lg=3, className="mb-2"),
+            dbc.Col(dcc.Dropdown(id='source-filter', options=[], multi=True, placeholder="Select Source"), width=12, md=6, lg=3, className="mb-2"),
+            dbc.Col(dcc.Dropdown(id='course-filter', options=[], multi=True, placeholder="Select Course"), width=12, md=6, lg=3, className="mb-2"),
+            dbc.Col(dcc.Dropdown(id='district-filter', options=[], multi=True, placeholder="Select Permanent District"), width=12, md=6, lg=3, className="mb-2"),
+            dbc.Col(dcc.Dropdown(id='activity-filter', options=[], multi=True, placeholder="Select Activity Event"), width=12, md=6, lg=3, className="mb-2"),
+            dbc.Col(dcc.Dropdown(id='status-filter', options=[], multi=True, placeholder="Select Status"), width=12, md=6, lg=3, className="mb-2"),
+            dbc.Col(dcc.Dropdown(id='group-filter', options=[], multi=True, placeholder="Select Group"), width=12, md=6, lg=3, className="mb-2"),
         ], className="mt-3"),
 
         dcc.Loading(
@@ -34,7 +33,6 @@ layout = html.Div([
 def register_callbacks(app):
     """ Function to register Dash callbacks """
 
-    # **1. Update Dropdown Options**
     @app.callback(
         [
             Output('owner-filter', 'options'),
@@ -49,12 +47,9 @@ def register_callbacks(app):
     )
     def update_dropdown_options(data):
         if not data:
-            return [[], [], [], [], [], [], []]  # Empty dropdowns if no data
+            return [[], [], [], [], [], [], []]  
 
         df = pd.read_json(data, orient='split')
-        
-        # Print columns for debugging
-        print("Columns in DataFrame:", df.columns)
 
         return [
             [{"label": i, "value": i} for i in df["Owner"].dropna().unique()],
@@ -66,7 +61,6 @@ def register_callbacks(app):
             [{"label": i, "value": i} for i in df["Group"].dropna().unique()],
         ]
 
-    # **2. Generate Caller Reports**
     @app.callback(
         Output('caller-reports-content', 'children'),
         [
@@ -112,15 +106,12 @@ def register_callbacks(app):
         caller_summary.rename(columns={'Status': 'Total Calls'}, inplace=True)
         caller_summary.drop(columns=['Call Duration Seconds'], inplace=True)
 
-        table = dbc.Table.from_dataframe(caller_summary, striped=True, bordered=True, hover=True, className="text-white")
+        table = dbc.Table.from_dataframe(
+            caller_summary, striped=True, bordered=True, hover=True, className="table-responsive text-white"
+        )
 
         # Lead Stage Breakdown
         lead_stage_summary = df.groupby(['Owner', 'Lead Stage']).size().reset_index(name='Stage Count')
-
-        # Merge to get total calls
-        caller_summary = df.groupby("Owner")["Status"].count().reset_index()
-        caller_summary.rename(columns={"Status": "Total Calls"}, inplace=True)
-        lead_stage_summary = lead_stage_summary.merge(caller_summary, on="Owner")
 
         # Create the bar chart
         stage_chart = dcc.Graph(
@@ -128,7 +119,8 @@ def register_callbacks(app):
                 lead_stage_summary, x="Owner", y="Stage Count", color="Lead Stage",
                 title="Total Calls by Caller (Lead Stage Breakdown)",
                 template="plotly_dark"
-            )
+            ),
+            style={'width': '100%', 'height': 'auto'}
         )
 
         # Line Chart for Call Counts Over Time
@@ -138,37 +130,32 @@ def register_callbacks(app):
         line_chart = dcc.Graph(
             figure=px.line(
                 call_counts_over_time, x='CreatedOn', y='Call Count', title="Call Counts Over Time",
-                template="plotly_dark", markers=True,color="CreatedOn"
-            )
+                template="plotly_dark", markers=True
+            ),
+            style={'width': '100%', 'height': 'auto'}
         )
 
-        # Group by Owner & Lead Stage to count the number of leads in each stage
-        lead_stage_summary = df.groupby(['Owner', 'Lead Stage']).size().reset_index(name='Stage Count')
-
-        # Create a stacked bar chart showing Lead Stages for each Owner
+        # Stacked Bar Chart for Lead Stages
         lead_stage_chart = dcc.Graph(
             figure=px.bar(
-                lead_stage_summary,
-                x="Owner",  
-                y="Stage Count",  
-                color="Lead Stage",  # Different colors for each Lead Stage
-                title="Lead Stage Distribution by Owner",
-                template="plotly_dark",
-                text_auto=True,  # Show counts on bars
-                barmode="stack",  # Stack bars for each Owner
-                hover_data={"Owner": True, "Lead Stage": True, "Stage Count": True}  # Show details on hover
-            ).update_xaxes(tickangle=-45)  # Rotate x-axis labels for better readability
+                lead_stage_summary, x="Owner", y="Stage Count", color="Lead Stage",
+                title="Lead Stage Distribution by Owner", template="plotly_dark",
+                text_auto=True, barmode="stack"
+            ),
+            style={'width': '100%', 'height': 'auto'}
         )
-
 
         # Funnel Chart for Lead Stages
         funnel_chart = dcc.Graph(
             figure=px.funnel(
                 df.groupby('Lead Stage').size().reset_index(name='Count'), 
                 x='Lead Stage', y='Count', title="Funnel Chart of Lead Stages",
-                template="plotly_dark",color="Lead Stage"
-            )
+                template="plotly_dark"
+            ),
+            style={'width': '100%', 'height': 'auto'}
         )
 
-        return html.Div([table, line_chart, lead_stage_chart, funnel_chart])
+        return html.Div([
+            table, line_chart, lead_stage_chart, funnel_chart
+        ], className="container-fluid")
 

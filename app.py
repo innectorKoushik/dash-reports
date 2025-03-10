@@ -1,7 +1,7 @@
 import dash
 from dash import dcc, html
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import os
 
 # Importing page modules
@@ -18,20 +18,23 @@ district_reports.register_callbacks(app)
 source_reports.register_callbacks(app)
 
 # Sidebar Navigation (Collapsible for Mobile)
+sidebar_content = dbc.Nav(
+    [
+        html.H2("Reports Links", className="text-white"),
+        dbc.NavLink("Home", href="/", active="exact", className="text-white"),
+        dbc.NavLink("Caller Reports", href="/caller-reports", active="exact", className="text-white"),
+        dbc.NavLink("Group Reports", href="/group-reports", active="exact", className="text-white"),
+        dbc.NavLink("District Reports", href="/district-reports", active="exact", className="text-white"),
+        dbc.NavLink("Source Reports", href="/source-reports", active="exact", className="text-white"),
+        dbc.NavLink("Course Reports", href="/course-reports", active="exact", className="text-white"),
+    ],
+    vertical=True,
+    pills=True,
+)
+
+# Offcanvas Sidebar (for mobile)
 sidebar = dbc.Offcanvas(
-    dbc.Nav(
-        [
-            html.H2("Reports Links", className="text-white"),
-            dbc.NavLink("Home", href="/", active="exact", className="text-white"),
-            dbc.NavLink("Caller Reports", href="/caller-reports", active="exact", className="text-white"),
-            dbc.NavLink("Group Reports", href="/group-reports", active="exact", className="text-white"),
-            dbc.NavLink("District Reports", href="/district-reports", active="exact", className="text-white"),
-            dbc.NavLink("Source Reports", href="/source-reports", active="exact", className="text-white"),
-            dbc.NavLink("Course Reports", href="/course-reports", active="exact", className="text-white"),
-        ],
-        vertical=True,
-        pills=True,
-    ),
+    sidebar_content,
     id="sidebar",
     title="Navigation",
     is_open=False,
@@ -39,7 +42,7 @@ sidebar = dbc.Offcanvas(
 )
 
 # Toggle Sidebar Button
-toggle_button = dbc.Button("☰ Menu", id="toggle-sidebar", n_clicks=0, color="primary", className="mb-2")
+toggle_button = dbc.Button("☰ Menu", id="toggle-sidebar", n_clicks=0, color="primary", className="mb-2 d-md-none")
 
 # Layout
 app.layout = dbc.Container([
@@ -47,17 +50,15 @@ app.layout = dbc.Container([
     dcc.Store(id='processed-data-store'),
 
     # Sidebar Toggle Button (only visible on mobile)
-    dbc.Row([
-        dbc.Col(toggle_button, width="auto", className="d-md-none"),  # Hide on medium+ screens
-    ]),
+    dbc.Row([dbc.Col(toggle_button, width="auto")], className="mb-2"),
 
-    sidebar,
+    sidebar,  # Mobile Sidebar
 
     dbc.Row([
-        # Sidebar (Hidden on small screens)
-        dbc.Col(sidebar, width=2, className="bg-secondary d-none d-md-block vh-100"),  # Sidebar hidden on mobile
+        # Desktop Sidebar (hidden on mobile)
+        dbc.Col(sidebar_content, width=2, className="bg-secondary d-none d-md-block vh-100"),  
 
-        # Main content
+        # Main Content
         dbc.Col(html.Div(id='page-content', className="p-3"), width=12, md=10)
     ], className="g-0"),  # Remove row gap
 ], fluid=True, className="bg-dark text-white vh-100")
@@ -84,8 +85,8 @@ def display_page(pathname):
 # Callback to toggle sidebar on mobile
 @app.callback(
     Output("sidebar", "is_open"),
-    [Input("toggle-sidebar", "n_clicks")],
-    [dash.State("sidebar", "is_open")]
+    Input("toggle-sidebar", "n_clicks"),
+    State("sidebar", "is_open")
 )
 def toggle_sidebar(n, is_open):
     if n:
